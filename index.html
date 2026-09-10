@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NaijaTV - GRATUIT</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans Devanagari', sans-serif;
+      background: #06060e;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    h1 {
+      font-size: 36px;
+      color: #ffffff;
+      margin-bottom: 16px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    
+    .subtitle {
+      font-size: 18px;
+      color: #888;
+      margin-bottom: 48px;
+    }
+    
+    .lang-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .lang-btn {
+      width: 100%;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .lang-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+    
+    .lang-btn:active {
+      transform: translateY(0);
+    }
+    
+    .lang-btn.primary {
+      background: #d34127;
+      border-color: #d34127;
+      box-shadow: 0 8px 24px rgba(211, 65, 39, 0.4);
+    }
+    
+    .lang-btn.primary:hover {
+      background: #e84d2f;
+      border-color: #e84d2f;
+      transform: translateY(-2px);
+    }
+    
+    .lang-flag {
+      font-size: 28px;
+      margin-right: 12px;
+      vertical-align: middle;
+    }
+    
+    .loading {
+      display: none;
+      margin-top: 24px;
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .loading.show {
+      display: block;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #666;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- 
+  ╔═══════════════════════════════════════════════════════════════════════════╗
+  ║                    🔧 EASY CONFIGURATION SECTION 🔧                        ║
+  ║                      在这里修改像素ID和跳转地址                              ║
+  ╚═══════════════════════════════════════════════════════════════════════════╝
+  -->
+  <script>
+  // ============================================================
+  // 📱 Facebook Pixel IDs - 修改这里的像素ID
+  // ============================================================
+  var PIXEL_IDS = [
+    '951523560972821',  // 主像素ID
+    //'2009064449772983',  // 备用像素ID
+    //'1084556820735368',  // 第三个像素ID（取消注释即可启用）
+  ];
+  
+  // ============================================================
+  // 🎯 Final Destination URL - 修改这里的最终跳转地址
+  // ============================================================
+  var FINAL_URL = 'https://famelack.com/';
+  
+  // ============================================================
+  // ⚠️ 以下代码请勿修改 / DO NOT EDIT BELOW THIS LINE ⚠️
+  // ============================================================
+  </script>
+
+  <div class="container">
+    <h1>Sélectionnez votre langue</h1>
+    <p class="subtitle">Choisissez votre langue préférée</p>
+    
+    <div class="lang-selector">
+      <button class="lang-btn" onclick="handleLanguageSelect('fr')" id="btnFrench">
+        <span class="btn-text">Français</span>
+        <span class="btn-arrow">→</span>
+      </button>
+      <button class="lang-btn" onclick="handleLanguageSelect('dy')" id="btnDioula">
+        <span class="btn-text">Dioula</span>
+        <span class="btn-arrow">→</span>
+      </button>
+    </div>
+    
+    <div class="loading" id="loadingMsg">
+      <span class="spinner"></span>
+      Chargement...
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // Facebook Pixel 基础代码
+    // ============================================================
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    
+    // 初始化所有像素ID
+    for (var i = 0; i < PIXEL_IDS.length; i++) {
+      fbq('init', PIXEL_IDS[i]);
+      console.log('Pixel initialized: ' + PIXEL_IDS[i]);
+    }
+    
+    // 触发 PageView 事件到所有像素
+    fbq('track', 'PageView');
+    
+    // ============================================================
+    // Facebook CAPI 客户端辅助代码
+    // ============================================================
+    
+    // 获取或生成 _fbp cookie（Facebook Browser Pixel）
+    function getFbp() {
+      var match = document.cookie.match('(^|;)\\s*_fbp\\s*=\\s*([^;]+)');
+      if (match) return match[2];
+      
+      // 生成新的 _fbp
+      var fbp = 'fb.1.' + Date.now() + '.' + Math.random().toString(36).substr(2, 9);
+      document.cookie = '_fbp=' + fbp + '; path=/; max-age=7776000'; // 90天
+      return fbp;
+    }
+    
+    // 获取 _fbc cookie（Facebook Click ID）
+    function getFbc() {
+      var match = document.cookie.match('(^|;)\\s*_fbc\\s*=\\s*([^;]+)');
+      if (match) return match[2];
+      
+      // 尝试从 URL 参数获取 fbclid
+      var urlParams = new URLSearchParams(window.location.search);
+      var fbclid = urlParams.get('fbclid');
+      if (fbclid) {
+        var fbc = 'fb.1.' + Date.now() + '.' + fbclid;
+        document.cookie = '_fbc=' + fbc + '; path=/; max-age=7776000'; // 90天
+        return fbc;
+      }
+      
+      return null;
+    }
+    
+    // 随机事件ID生成器（用于去重）
+    function generateEventId() {
+      return 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+    
+    // 发送事件到 CAPI
+    async function sendCAPIEvent(eventName, customData) {
+      try {
+        var eventId = generateEventId();
+        
+        var payload = {
+          event_name: eventName,
+          event_id: eventId,
+          custom_data: customData || {},
+          fbp: getFbp(),
+          fbc: getFbc(),
+          user_agent: navigator.userAgent,
+          page_url: window.location.href,
+          referrer_url: document.referrer
+        };
+        
+        var response = await fetch('/api/fb-capi', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        var result = await response.json();
+        
+        if (result.success) {
+          console.log('✅ CAPI Event sent: ' + eventName + ' | EventID: ' + eventId + ' | Pixels: ' + result.pixels.successful + '/' + result.pixels.total);
+          return { success: true, eventId: eventId };
+        } else {
+          console.error('❌ CAPI Event failed:', result.error);
+          return { success: false, error: result.error };
+        }
+      } catch (error) {
+        console.error('❌ CAPI Request error:', error);
+        return { success: false, error: error.message };
+      }
+    }
+    
+    // 页面加载时发送 PageView
+    window.addEventListener('load', function() {
+      sendCAPIEvent('PageView');
+      
+      // 保存到localStorage
+      try {
+        localStorage.setItem('app_opened_time', new Date().toISOString());
+      } catch(e) {
+        console.log('localStorage not available');
+      }
+    });
+    
+    // ============================================================
+    // 🛡️ 去重机制 - 防止 Facebook 事件失真
+    // ============================================================
+    
+    // 会话级别的事件发送标记（防止同一页面内重复发送）
+    var eventSent = false;
+    var buttonClicked = false;
+    
+    // 生成唯一的会话 ID
+    function generateSessionId() {
+      return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+    
+    // 检查是否已经发送过事件（多重检查）
+    function hasEventBeenSent() {
+      try {
+        // 1. 检查会话级别标记
+        if (eventSent) {
+          console.log('去重: 会话级别已发送');
+          return true;
+        }
+        
+        // 2. 检查 sessionStorage（页面级别）
+        if (sessionStorage.getItem('fb_event_sent') === 'true') {
+          console.log('去重: sessionStorage 已标记');
+          return true;
+        }
+        
+        // 3. 检查 localStorage（持久化，5分钟内有效）
+        var lastEventTime = localStorage.getItem('fb_event_time');
+        if (lastEventTime) {
+          var timeDiff = Date.now() - parseInt(lastEventTime);
+          if (timeDiff < 5 * 60 * 1000) { // 5分钟内
+            console.log('去重: localStorage 5分钟内已发送');
+            return true;
+          }
+        }
+        
+        return false;
+      } catch(e) {
+        console.error('去重检查失败:', e);
+        return false;
+      }
+    }
+    
+    // 标记事件已发送
+    function markEventSent() {
+      try {
+        // 1. 会话级别标记
+        eventSent = true;
+        
+        // 2. sessionStorage 标记（页面级别）
+        sessionStorage.setItem('fb_event_sent', 'true');
+        sessionStorage.setItem('fb_event_session_id', generateSessionId());
+        
+        // 3. localStorage 标记（持久化）
+        localStorage.setItem('fb_event_sent', 'true');
+        localStorage.setItem('fb_event_time', Date.now().toString());
+        localStorage.setItem('fb_event_timestamp', new Date().toISOString());
+        
+        console.log('✅ 事件已标记为已发送');
+      } catch(e) {
+        console.error('标记事件失败:', e);
+      }
+    }
+    
+    // 语言选择处理（带完整去重保护）
+    function handleLanguageSelect(lang) {
+      // ============================================================
+      // 第一层防护：检查按钮是否已点击
+      // ============================================================
+      if (buttonClicked) {
+        console.log('去重: 按钮已点击，阻止重复操作');
+        return;
+      }
+      
+      // 立即标记按钮已点击
+      buttonClicked = true;
+      
+      var btnFrench = document.getElementById('btnFrench');
+      var btnDioula = document.getElementById('btnDioula');
+      var loadingMsg = document.getElementById('loadingMsg');
+      
+      // 禁用所有按钮，防止重复点击
+      var allButtons = [btnFrench, btnDioula];
+      allButtons.forEach(function(btn) {
+        if (btn) {
+          btn.disabled = true;
+          btn.style.opacity = '0.5';
+          btn.style.cursor = 'not-allowed';
+        }
+      });
+      
+      // 显示加载提示
+      loadingMsg.className = 'loading show';
+      
+      // ============================================================
+      // 第二层防护：检查事件是否已发送
+      // ============================================================
+      if (hasEventBeenSent()) {
+        console.log('去重: 事件已发送过，直接跳转');
+        // 直接跳转，不再发送事件
+        redirectToFinalPage(lang);
+        return;
+      }
+      
+      // ============================================================
+      // 发送 Facebook Purchase 事件 - 客户端 Pixel
+      // ============================================================
+      try {
+        console.log('🎯 准备发送 Purchase 事件: Language=' + lang);
+        
+        // 保存选择的语言
+        localStorage.setItem('selected_language', lang);
+        
+        // 触发购物事件到客户端 Pixel - 这是关键！
+        fbq('track', 'Purchase', {
+          content_name: 'NaijaTV App Language Selected',
+          content_type: 'product',
+          content_category: 'app_activation',
+          content_ids: [generateSessionId()], // 添加唯一 ID
+          value: 0.00,
+          currency: 'USD'
+        });
+        
+        // 标记事件已发送
+        markEventSent();
+        
+        // 兼容旧的 localStorage 记录
+        localStorage.setItem('purchase_tracked', 'true');
+        localStorage.setItem('purchase_time', new Date().toISOString());
+        
+        console.log('✅ Purchase 事件已发送 (Pixel): Language=' + lang);
+      } catch(e) {
+        console.error('❌ 发送 Purchase 事件失败:', e);
+      }
+      
+      // ============================================================
+      // 发送 Purchase 事件 - CAPI 服务器端（只发送一次）
+      // ============================================================
+      try {
+        // 发送 Purchase 事件到 CAPI
+        sendCAPIEvent('Purchase', {
+          content_name: 'NaijaTV App Language Selected',
+          content_type: 'product',
+          content_category: 'app_activation',
+          language: lang,
+          value: 0.00,
+          currency: 'USD'
+        }).then(function(result) {
+          if (result.success) {
+            localStorage.setItem('last_event_id', result.eventId);
+            console.log('✅ Purchase 事件已发送 (CAPI): Language=' + lang);
+          }
+        });
+      } catch(e) {
+        console.error('❌ 发送 CAPI Purchase 事件失败:', e);
+      }
+      
+      // 跳转到最终页面
+      redirectToFinalPage(lang);
+    }
+    
+    // 跳转到最终页面
+    function redirectToFinalPage(lang) {
+      setTimeout(function() {
+        try {
+          var finalUrl = FINAL_URL;
+          if (finalUrl.indexOf('?') > -1) {
+            finalUrl += '&lang=' + lang;
+          } else {
+            finalUrl += '?lang=' + lang;
+          }
+          
+          console.log('🔄 跳转到:', finalUrl);
+          window.location.href = finalUrl;
+        } catch(e) {
+          console.error('跳转失败:', e);
+        }
+      }, 1500);
+    }
+    
+    // ============================================================
+    // 页面加载时检查：如果已发送过事件，可选择直接跳转
+    // ============================================================
+    try {
+      if (hasEventBeenSent()) {
+        console.log('⚠️ 检测到已发送过事件');
+        // 如果需要自动跳转，取消注释以下行：
+        // window.location.href = FINAL_URL;
+      }
+    } catch(e) {
+      console.log('页面加载检查失败:', e);
+    }
+  </script>
+</body>
+</html>
